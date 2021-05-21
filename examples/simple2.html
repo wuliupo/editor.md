@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="utf-8" />
+        <title>Simple example - Editor.md examples</title>
+        <link rel="stylesheet" href="css/style.css" />
+        <link rel="stylesheet" href="../css/editormd.css" />
+        <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
+        <style>
+            #layout button { position: absolute; top: 10px; background: #fff; border: none; box-shadow: none; outline: none; cursor: pointer; border: 1px solid #ccc; padding: 2px 6px; width: 50px; overflow: hidden; }
+            #getHTML { right: 10px; z-index: 3; }
+            #importMD { right: 70px; z-index: 1; }
+            #getHTML:after { content: "HTML"; }
+            #importMD:after { content: "import"; }
+            #preview { top: 0px; left: 0px; width: 100vw; height: 100vh; padding: 50px; text-align: left; z-index: 2; }
+            #importMD input { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; }
+        </style>
+    </head>
+    <body>
+        <div id="layout">
+            <button type="file" id="importMD">
+                <input type="file" accept=".md">
+            </button>
+            <button type="button" id="getHTML"></button>
+            <div id="test-editormd">
+                <textarea style="display:none;"></textarea>
+            </div>
+        </div>
+        <textarea id="preview" class="editormd-preview"></textarea>
+        <script src="js/jquery.min.js"></script>
+        <script src="../editormd.js"></script>
+        <script type="text/javascript">
+			var testEditor;
+
+            $(function() {
+                testEditor = editormd("test-editormd", {
+                    width   : "100vw",
+                    height  : "100vh",
+                    syncScrolling : "single",
+                    path    : "../lib/",
+                    htmlDecode : true,
+                });
+                setTimeout(function() {
+                    testEditor.fullscreen();
+                }, 200);
+            });
+            var editor = $('#test-editormd');
+            $('#getHTML').click(function() {
+                if ($('#preview').css('display') === 'none') {
+                    $('#preview').show().val($('.editormd-preview-container').html() || '没有输入 MD 内容');
+                    editor.hide();
+                    uploader.hide();
+                } else {
+                    $('#preview').hide().val('');
+                    editor.show();
+                    uploader.show();
+                }
+            });
+            var uploader = $('#importMD input');
+            uploader.change(function() {
+                var reader = new FileReader();
+                reader.onload = () => {
+                    testEditor.setValue(reader.result);
+                    uploader.val('');
+                };
+                reader.readAsText(this.files[0]);
+            });
+        </script>
+    </body>
+</html>
